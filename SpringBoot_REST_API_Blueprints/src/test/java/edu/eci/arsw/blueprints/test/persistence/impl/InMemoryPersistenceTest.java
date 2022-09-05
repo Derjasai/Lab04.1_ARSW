@@ -69,6 +69,60 @@ public class InMemoryPersistenceTest {
         
     }
 
+    @Test
+    public void shouldGetBlueprint(){
+        InMemoryBlueprintPersistence ibpp = new InMemoryBlueprintPersistence();
+        try{
+            Point[] pts0=new Point[]{new Point(25, 15),new Point(15, 15)};
+            Blueprint bp0=new Blueprint("Zoro", "edificio",pts0);
+            ibpp.saveBlueprint(bp0);
+            Blueprint bp = ibpp.getBlueprint("Zoro", "edificio");
+            assertEquals(bp.getAuthor(), "Zoro");
+            assertEquals(bp.getName(), "edificio");
+        }catch (BlueprintNotFoundException e) {
+            fail("No se encuentra autor");
+        } catch (BlueprintPersistenceException e) {
+            fail("Error al agregar");
+        }
+    }
+
+    @Test
+    public void shouldGetBpByAuthor(){
+        InMemoryBlueprintPersistence ibpp = new InMemoryBlueprintPersistence();
+        Point[] pts0=new Point[]{new Point(25, 15),new Point(15, 15)};
+        Blueprint bp0=new Blueprint("Luffy", "mypaint1",pts0);
+        Point[] pts1=new Point[]{new Point(46, 46),new Point(16, 16)};
+        Blueprint bp1=new Blueprint("Luffy", "mypaint2",pts1);
+        Point[] pts2=new Point[]{new Point(10, 15),new Point(20, 25)};
+        Blueprint bp2=new Blueprint("Bob", "mypaint2",pts2);
+        try{
+            ibpp.saveBlueprint(bp0);
+            ibpp.saveBlueprint(bp1);
+            ibpp.saveBlueprint(bp2);
+            assertEquals(ibpp.getBlueprintsByAuthor("Luffy").size(), 2);
+        } catch (BlueprintPersistenceException | BlueprintNotFoundException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void shouldNotGetBpByAuthor(){
+        InMemoryBlueprintPersistence ibpp = new InMemoryBlueprintPersistence();
+        Point[] pts0=new Point[]{new Point(25, 15),new Point(15, 15)};
+        Blueprint bp0=new Blueprint("Luffy", "mypaint1",pts0);
+        Point[] pts1=new Point[]{new Point(46, 46),new Point(16, 16)};
+        Blueprint bp1=new Blueprint("Luffy", "mypaint2",pts1);
+        Point[] pts2=new Point[]{new Point(10, 15),new Point(20, 25)};
+        Blueprint bp2=new Blueprint("Bob", "mypaint2",pts2);
+        try{
+            ibpp.saveBlueprint(bp0);
+            ibpp.saveBlueprint(bp1);
+            ibpp.saveBlueprint(bp2);
+            assertNotEquals(ibpp.getBlueprintsByAuthor("Lufy").size(), 2);
+        } catch (BlueprintPersistenceException | BlueprintNotFoundException e) {
+            fail(e.getMessage());
+        }
+    }
 
     
 }
