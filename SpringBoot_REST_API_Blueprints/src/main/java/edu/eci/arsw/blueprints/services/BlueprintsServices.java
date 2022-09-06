@@ -10,6 +10,7 @@ import edu.eci.arsw.blueprints.model.Point;
 import edu.eci.arsw.blueprints.persistence.BlueprintNotFoundException;
 import edu.eci.arsw.blueprints.persistence.BlueprintPersistenceException;
 import edu.eci.arsw.blueprints.persistence.BlueprintsPersistence;
+import edu.eci.arsw.blueprints.filters.BlueprintsFilters;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -28,13 +29,15 @@ public class BlueprintsServices {
     @Autowired
     BlueprintsPersistence bpp=null;
 
+    @Autowired
+    BlueprintsFilters bpf;
     
     public void addNewBlueprint(Blueprint bp) throws BlueprintPersistenceException {
         bpp.saveBlueprint(bp);
     }
     
     public Set<Blueprint> getAllBlueprints() throws BlueprintNotFoundException {
-        return bpp.getAllBlueprint();
+        return bpf.filters(bpp.getAllBlueprint());
     }
     
     /**
@@ -46,7 +49,7 @@ public class BlueprintsServices {
      */
     public Blueprint getBlueprint(String author,String name) throws BlueprintNotFoundException{
 
-        return bpp.getBlueprint(author,name);
+        return bpf.filter(bpp.getBlueprint(author,name));
     }
     
     /**
@@ -56,7 +59,10 @@ public class BlueprintsServices {
      * @throws BlueprintNotFoundException if the given author doesn't exist
      */
     public Set<Blueprint> getBlueprintsByAuthor(String author) throws BlueprintNotFoundException{
-        return bpp.getBlueprintsByAuthor(author);
+        return bpf.filters(bpp.getBlueprintsByAuthor(author));
     }
     
+    public Set<Blueprint> filter(Set<Blueprint> blueprints) throws BlueprintNotFoundException{
+        return bpf.filters(blueprints);
+    }
 }
