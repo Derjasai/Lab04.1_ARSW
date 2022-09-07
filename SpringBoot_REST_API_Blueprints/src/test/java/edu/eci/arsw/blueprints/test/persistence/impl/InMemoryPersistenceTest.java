@@ -10,9 +10,18 @@ import edu.eci.arsw.blueprints.model.Point;
 import edu.eci.arsw.blueprints.persistence.BlueprintNotFoundException;
 import edu.eci.arsw.blueprints.persistence.BlueprintPersistenceException;
 import edu.eci.arsw.blueprints.persistence.impl.InMemoryBlueprintPersistence;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import edu.eci.arsw.blueprints.services.BlueprintsServices;
+import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import static org.junit.Assert.*;
 
 /**
@@ -124,5 +133,25 @@ public class InMemoryPersistenceTest {
         }
     }
 
-    
+    @Test
+    public void shouldFilterByRedundant() throws BlueprintPersistenceException, BlueprintNotFoundException {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+        BlueprintsServices bpServices = ac.getBean(BlueprintsServices.class);
+        Point[] pts0 = new Point[]{new Point(25, 10), new Point(15, 15), new Point(15, 15), new Point(10, 5)};
+        Blueprint bp0 = new Blueprint("Zoro", "edificio", pts0);
+
+        bpServices.addNewBlueprint(bp0);
+        bp0 = bpServices.filterBluePrint(bp0);
+
+        Point[] ptsCorrects = new Point[]{new Point(25, 10), new Point(15, 15), new Point(10, 5)};
+        List<Point> ptsReal= bp0.getPoints();
+        try{
+            for (int i = 0; i < ptsCorrects.length; i++){
+                assertEquals(ptsCorrects[i].getX(),ptsReal.get(i).getX());
+                assertEquals(ptsCorrects[i].getY(),ptsReal.get(i).getY());
+            }
+        }catch (Exception e){
+            fail(e.getMessage());
+        }
+    }
 }

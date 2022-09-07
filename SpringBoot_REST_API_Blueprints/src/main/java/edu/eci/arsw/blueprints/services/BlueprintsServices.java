@@ -49,7 +49,12 @@ public class BlueprintsServices {
      */
     public Blueprint getBlueprint(String author,String name) throws BlueprintNotFoundException{
 
-        return bpf.filter(bpp.getBlueprint(author,name));
+        return bpp.getBlueprint(author,name);
+    }
+
+    public Blueprint filterBluePrint(Blueprint bp) throws BlueprintNotFoundException {
+
+        return bpf.filter(bp);
     }
     
     /**
